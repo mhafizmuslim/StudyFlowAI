@@ -1,0 +1,29 @@
+services:
+  # Web service (Backend API)
+  - type: web
+    name: studyflowai-api
+    runtime: node
+    env: node
+    buildCommand: npm install
+    startCommand: npm run server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        fromDatabase:
+          name: studyflowai-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: LITELLM_BASE_URL
+        sync: false
+      - key: LITELLM_API_KEY
+        sync: false
+
+databases:
+  # PostgreSQL Database
+  - name: studyflowai-db
+    databaseName: studyflowai
+    user: studyflowai

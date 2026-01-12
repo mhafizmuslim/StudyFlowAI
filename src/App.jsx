@@ -28,7 +28,7 @@ function App() {
   const { isAuthenticated } = useAuthStore();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/StudyFlowAI">
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />

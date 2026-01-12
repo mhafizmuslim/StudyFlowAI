@@ -9,10 +9,17 @@ const __dirname = path.dirname(__filename);
 // Load .env from project root
 dotenv.config({ path: path.join(__dirname, "../../.env") });
 
-const client = new OpenAI({
-  baseURL: process.env.LITELLM_BASE_URL || "https://litellm.koboi2026.biz.id/v1",
-  apiKey: process.env.LITELLM_API_KEY,
-});
+// Create client lazily to avoid initialization errors
+let client = null;
+function getClient() {
+  if (!client) {
+    client = new OpenAI({
+      baseURL: process.env.LITELLM_BASE_URL || "https://litellm.koboi2026.biz.id/v1",
+      apiKey: process.env.LITELLM_API_KEY || process.env.OPENAI_API_KEY,
+    });
+  }
+  return client;
+}
 
 // System prompts untuk berbagai fungsi AI
 const SYSTEM_PROMPTS = {
@@ -301,7 +308,7 @@ class GeminiAgent {
    */
   async callAI(systemPrompt, userPrompt, options = {}) {
     try {
-      const response = await client.chat.completions.create({
+      const response = await getClient().chat.completions.create({
         model: this.model,
         messages: [
           {
